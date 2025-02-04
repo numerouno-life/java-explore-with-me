@@ -14,7 +14,7 @@ import java.time.LocalDateTime;
 @EqualsAndHashCode(of = "id")
 @NoArgsConstructor
 @AllArgsConstructor
-public class Stats {
+public class EndpointHit {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -24,6 +24,6 @@ public class Stats {
     private String uri;
     private String ip;
 
-    @Column(name = "time_stamp")
+    @Column(name = "timestamp")
     private LocalDateTime timestamp;
 }

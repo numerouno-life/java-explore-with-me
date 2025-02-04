@@ -12,7 +12,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class StatsDto {
+public class EndpointHitDto {
 
     @NotBlank
     private String uri;
