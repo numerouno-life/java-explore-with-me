@@ -20,7 +20,7 @@ public class ApiError {
     private String reason; // причина ошибки
     private String status;
 
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss" )
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss")
     private LocalDateTime localDateTime;
 
     private Map<String, Object> context;
