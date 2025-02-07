@@ -19,14 +19,13 @@ import java.util.List;
 @Transactional
 @RequiredArgsConstructor
 public class EndpointHitServiceImpl implements EndpointHitService {
-    private final EndpointHitMapper endpointHitMapper;
     private final EndpointHitRepository endpointHitRepository;
 
     @Transactional
     @Override
     public void saveStat(EndpointHitDto statDto) {
         log.info("Try to save stat: {}", statDto);
-        endpointHitRepository.save(endpointHitMapper.toEntity(statDto));
+        endpointHitRepository.save(EndpointHitMapper.toEntity(statDto));
         log.info("save stat: {}", statDto);
     }
 

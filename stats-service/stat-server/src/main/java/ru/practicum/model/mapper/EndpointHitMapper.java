@@ -1,12 +1,19 @@
 package ru.practicum.model.mapper;
 
-import org.mapstruct.Mapper;
+import lombok.experimental.UtilityClass;
 import ru.practicum.dto.EndpointHitDto;
 import ru.practicum.model.EndpointHit;
 
-@Mapper(componentModel = "spring")
-public interface EndpointHitMapper {
+@UtilityClass
+public class EndpointHitMapper {
 
-    EndpointHit toEntity(EndpointHitDto dto);
+    public EndpointHit toEntity(EndpointHitDto dto) {
+        return EndpointHit.builder()
+                .app(dto.getApp())
+                .uri(dto.getUri())
+                .ip(dto.getIp())
+                .timestamp(dto.getTimestamp())
+                .build();
+    }
 }
 
