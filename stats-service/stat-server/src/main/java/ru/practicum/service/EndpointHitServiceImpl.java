@@ -35,7 +35,7 @@ public class EndpointHitServiceImpl implements EndpointHitService {
     public List<ViewStats> getStat(String start, String end, List<String> uris, boolean unique) {
         log.info("get statistics on visits: start={}, end={}, uris={}, unique={}", start, end, uris, unique);
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-        LocalDateTime startDateTime= LocalDateTime.parse(start, formatter);
+        LocalDateTime startDateTime = LocalDateTime.parse(start, formatter);
         LocalDateTime endDateTime = LocalDateTime.parse(end, formatter);
 
         if (startDateTime.isAfter(endDateTime)) {
@@ -46,22 +46,22 @@ public class EndpointHitServiceImpl implements EndpointHitService {
         if (uris == null || uris.isEmpty()) {
             if (unique) {
                 log.info("get statistics on visits without uris: ip unique");
-                return endpointHitRepository.
-                        findAllByTimestampBetweenStartAndEndWithUniqueIp(startDateTime, endDateTime);
+                return endpointHitRepository
+                        .findAllByTimestampBetweenStartAndEndWithUniqueIp(startDateTime, endDateTime);
             } else {
                 log.info("get statistics on visits without uris: ip is not unique");
-                return endpointHitRepository.
-                        findAllByTimestampBetweenStartAndEndWhereIpNotUnique(startDateTime, endDateTime);
+                return endpointHitRepository
+                        .findAllByTimestampBetweenStartAndEndWhereIpNotUnique(startDateTime, endDateTime);
             }
         } else {
             if (unique) {
                 log.info("get statistics on visits with uris: ip unique");
-                return endpointHitRepository.
-                        findAllByTimestampBetweenStartAndEndAndUriUniqueIp(startDateTime, endDateTime, uris);
+                return endpointHitRepository
+                        .findAllByTimestampBetweenStartAndEndAndUriUniqueIp(startDateTime, endDateTime, uris);
             } else {
                 log.info("get statistics on visits with uris: ip is not unique");
-                return endpointHitRepository.
-                        findAllByTimestampBetweenStartAndEndAndUriWhereIpNotUnique(startDateTime, endDateTime, uris);
+                return endpointHitRepository
+                        .findAllByTimestampBetweenStartAndEndAndUriWhereIpNotUnique(startDateTime, endDateTime, uris);
             }
         }
     }
