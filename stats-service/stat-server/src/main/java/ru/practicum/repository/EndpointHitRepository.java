@@ -17,7 +17,7 @@ public interface EndpointHitRepository extends JpaRepository<EndpointHit, Long> 
             FROM EndpointHit e
             WHERE e.timestamp BETWEEN :start AND :end
             GROUP BY e.app, e.uri
-            ORDER BY COUNT(e.ip) DESC
+            ORDER BY COUNT(DISTINCT e.ip) DESC
             """)
     List<ViewStats> findAllByTimestampBetweenStartAndEndWithUniqueIp(@Param("start") LocalDateTime start,
                                                                      @Param("end") LocalDateTime end);
@@ -39,7 +39,7 @@ public interface EndpointHitRepository extends JpaRepository<EndpointHit, Long> 
             FROM EndpointHit e
             WHERE e.timestamp BETWEEN :start AND :end AND e.uri IN :uris
             GROUP BY e.app, e.uri
-            ORDER BY COUNT(e.ip) DESC
+            ORDER BY COUNT(DISTINCT e.ip) DESC
             """)
     List<ViewStats> findAllByTimestampBetweenStartAndEndAndUriUniqueIp(@Param("start") LocalDateTime start,
                                                                        @Param("end") LocalDateTime end,
