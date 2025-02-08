@@ -32,6 +32,6 @@ public class StatClient extends BaseClient {
             params.put("uris", String.join(",", uris));
         }
         params.put("unique", unique);
-        return get("", params);
+        return get("/stats", params);
     }
 }
