@@ -26,12 +26,10 @@ public class Compilation {
     boolean pinned;
 
     String title;
-
-    @ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(
-            name = "compilations_events",
-            joinColumns = @JoinColumn(name = "compilation_id"),
-            inverseJoinColumns = @JoinColumn(name = "event_id")
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(name = "compilations_events",
+        joinColumns = @JoinColumn(name = "compilation_id"),
+        inverseJoinColumns = @JoinColumn(name = "event_id")
     )
     Set<Event> events;
 }
