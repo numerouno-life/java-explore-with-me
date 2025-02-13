@@ -8,7 +8,7 @@ import ru.practicum.dtos.user.UserShortDto;
 
 import java.time.LocalDateTime;
 
-import static ru.practicum.dtos.Utils.DateTimeFormatter.FORMAT;
+import static ru.practicum.dtos.utils.DateTimeFormatter.FORMAT;
 
 @Getter
 @Setter

@@ -3,7 +3,7 @@ package ru.practicum.model;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
-import ru.practicum.dtos.event.EventFullDto;
+import ru.practicum.enums.State;
 
 import java.time.LocalDateTime;
 
@@ -56,7 +56,7 @@ public class Event {
     User initiator;
 
     @Enumerated(EnumType.STRING)
-    EventFullDto.State state;
+    State state;
 
     Integer views;
 

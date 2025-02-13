@@ -4,12 +4,13 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 import ru.practicum.dtos.category.CategoryDto;
-import ru.practicum.dtos.location.Location;
+import ru.practicum.dtos.location.LocationDto;
 import ru.practicum.dtos.user.UserShortDto;
+import ru.practicum.enums.State;
 
 import java.time.LocalDateTime;
 
-import static ru.practicum.dtos.Utils.DateTimeFormatter.FORMAT;
+import static ru.practicum.dtos.utils.DateTimeFormatter.FORMAT;
 
 @Getter
 @Setter
@@ -29,7 +30,7 @@ public class EventFullDto {
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = FORMAT)
     LocalDateTime eventDate;
     UserShortDto initiator;
-    Location location;
+    LocationDto location;
     boolean paid;
     Integer participantLimit;
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = FORMAT)
@@ -38,9 +39,5 @@ public class EventFullDto {
     State state;
     String title;
     Integer views;
-
-    public enum State {
-        PENDING, PUBLISHED, CANCELED
-    }
 
 }

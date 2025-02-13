@@ -4,11 +4,12 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.validation.constraints.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
-import ru.practicum.dtos.location.Location;
+import ru.practicum.dtos.location.LocationDto;
+import ru.practicum.enums.StateAction;
 
 import java.time.LocalDateTime;
 
-import static ru.practicum.dtos.Utils.DateTimeFormatter.FORMAT;
+import static ru.practicum.dtos.utils.DateTimeFormatter.FORMAT;
 
 @Getter
 @Setter
@@ -33,7 +34,7 @@ public class UpdateEventUserRequest {
     LocalDateTime eventDate;
 
     @NotNull
-    Location location;
+    LocationDto location;
 
     boolean paid;
 
@@ -41,7 +42,7 @@ public class UpdateEventUserRequest {
     Integer participantLimit;
 
     boolean requestModeration;
-    UpdateEventAdminRequest.StateAction stateAction;
+    StateAction stateAction;
 
     @NotBlank
     @Size(min = 3, max = 120)

@@ -3,7 +3,7 @@ package ru.practicum.model;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
-import ru.practicum.dtos.request.ParticipationRequestDto;
+import ru.practicum.enums.Status;
 
 import java.time.LocalDateTime;
 
@@ -31,7 +31,7 @@ public class Request {
     Event event;
 
     @Enumerated(EnumType.STRING)
-    ParticipationRequestDto.Status status;
+    Status status;
 
     @JoinColumn(name = "requestor_id")
     User requester;

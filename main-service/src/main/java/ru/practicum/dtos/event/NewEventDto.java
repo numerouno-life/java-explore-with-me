@@ -7,11 +7,11 @@ import jakarta.validation.constraints.PositiveOrZero;
 import jakarta.validation.constraints.Size;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
-import ru.practicum.dtos.location.Location;
+import ru.practicum.dtos.location.LocationDto;
 
 import java.time.LocalDateTime;
 
-import static ru.practicum.dtos.Utils.DateTimeFormatter.FORMAT;
+import static ru.practicum.dtos.utils.DateTimeFormatter.FORMAT;
 
 @Getter
 @Setter
@@ -34,7 +34,8 @@ public class NewEventDto {
     @NotNull
     LocalDateTime eventDate;
     @NotNull
-    Location location;
+    LocationDto location;
+
     boolean paid;
 
     @PositiveOrZero

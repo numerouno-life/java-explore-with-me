@@ -4,10 +4,11 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
+import ru.practicum.enums.Status;
 
 import java.time.LocalDateTime;
 
-import static ru.practicum.dtos.Utils.DateTimeFormatter.FORMAT;
+import static ru.practicum.dtos.utils.DateTimeFormatter.FORMAT;
 
 @Getter
 @Setter
@@ -32,7 +33,4 @@ public class ParticipationRequestDto {
     @NotNull
     Status status;
 
-    public enum Status {
-        PENDING, CONFIRMED, REJECTED, CANCELED;
-    }
 }
