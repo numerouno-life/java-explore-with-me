@@ -22,7 +22,7 @@ public class Request {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "request_id")
-    Long id;
+    Integer id;
 
     @Column(name = "created_on", nullable = false)
     LocalDateTime created;

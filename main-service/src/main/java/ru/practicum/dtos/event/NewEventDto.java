@@ -22,6 +22,7 @@ import static ru.practicum.dtos.utils.DateTimeFormatter.FORMAT;
 public class NewEventDto {
 
     @NotBlank
+    @NotNull
     @Size(min = 20, max = 2000)
     String annotation;
     @NotNull

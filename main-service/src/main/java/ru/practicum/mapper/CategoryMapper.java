@@ -1,13 +1,23 @@
 package ru.practicum.mapper;
 
-import org.mapstruct.Mapper;
+import lombok.experimental.UtilityClass;
 import ru.practicum.dtos.category.CategoryDto;
 import ru.practicum.model.Category;
 
-@Mapper
-public interface CategoryMapper {
+@UtilityClass
+public class CategoryMapper {
 
-    Category toEntity(CategoryDto categoryDto);
+    public Category toEntity(CategoryDto categoryDto) {
+        return Category.builder()
+                .id(categoryDto.getId())
+                .name(categoryDto.getName())
+                .build();
+    }
 
-    CategoryDto toDto(Category category);
+    public CategoryDto toDto(Category category) {
+        return CategoryDto.builder()
+                .id(category.getId())
+                .name(category.getName())
+                .build();
+    }
 }

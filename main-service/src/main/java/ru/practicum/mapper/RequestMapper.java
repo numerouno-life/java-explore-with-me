@@ -1,17 +1,36 @@
 package ru.practicum.mapper;
 
-import org.mapstruct.Mapper;
+import lombok.experimental.UtilityClass;
 import ru.practicum.dtos.request.ParticipationRequestDto;
 import ru.practicum.model.Request;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
-@Mapper
-public interface RequestMapper {
+@UtilityClass
+public class RequestMapper {
 
-    ParticipationRequestDto toParticipationRequestDto(Request request);
+    public ParticipationRequestDto toParticipationRequestDto(Request request) {
+        return ParticipationRequestDto.builder()
+                .id(request.getId())
+                .created(LocalDateTime.now())
+                .event(request.getEvent().getId())
+                .requester(request.getRequester().getId())
+                .status(request.getStatus())
+                .build();
+    }
 
-    List<ParticipationRequestDto> toParticipationRequestDtoList(List<Request> requests);
+    public Request toEntity(ParticipationRequestDto participationRequestDto) {
+        return Request.builder()
+                .id(participationRequestDto.getId())
+                .created(participationRequestDto.getCreated())
+                .status(participationRequestDto.getStatus())
+                .build();
+    }
 
-    Request toEntity(ParticipationRequestDto participationRequestDto);
+    public List<ParticipationRequestDto> toParticipationRequestDtoList(List<Request> requests) {
+        return requests.stream()
+                .map(RequestMapper::toParticipationRequestDto)
+                .toList();
+    }
 }

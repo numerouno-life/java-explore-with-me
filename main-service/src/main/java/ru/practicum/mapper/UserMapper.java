@@ -1,23 +1,31 @@
 package ru.practicum.mapper;
 
-import org.mapstruct.Mapper;
+import lombok.experimental.UtilityClass;
 import ru.practicum.dtos.user.UserDto;
 import ru.practicum.dtos.user.UserShortDto;
 import ru.practicum.model.User;
 
-import java.util.List;
+@UtilityClass
+public class UserMapper {
 
-@Mapper
-public interface UserMapper {
+    public UserDto toUserDto(User user) {
+        return UserDto.builder()
+                .id(user.getId())
+                .name(user.getName())
+                .build();
+    }
 
-    UserDto toUserDto(User user);
+    public User toEntity(UserDto userDto) {
+        return User.builder()
+                .id(userDto.getId())
+                .name(userDto.getName())
+                .build();
+    }
 
-    User toEntity(UserDto userDto);
-
-    UserShortDto toUserShortDto(User user);
-
-    List<UserDto> toUserDtoList(List<User> users);
-
-    List<UserShortDto> toUserShortDtoList(List<User> users);
-
+    public UserShortDto toUserShortDto(User user) {
+        return UserShortDto.builder()
+                .id(user.getId())
+                .name(user.getName())
+                .build();
+    }
 }
