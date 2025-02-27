@@ -7,6 +7,7 @@ import ru.practicum.dtos.category.CategoryDto;
 import ru.practicum.dtos.location.LocationDto;
 import ru.practicum.dtos.user.UserShortDto;
 import ru.practicum.enums.State;
+import ru.practicum.model.Location;
 
 import java.time.LocalDateTime;
 
@@ -20,24 +21,22 @@ import static ru.practicum.dtos.utils.DateTimeFormatter.FORMAT;
 @Builder
 public class EventFullDto {
 
-    Integer id;
+    Long id;
     String annotation;
     CategoryDto category;
     Integer confirmedRequests;
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = FORMAT)
+    @JsonFormat(pattern = FORMAT)
     LocalDateTime createdOn;
+    LocalDateTime publishedOn;
     String description;
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = FORMAT)
+    @JsonFormat(pattern = FORMAT)
     LocalDateTime eventDate;
     UserShortDto initiator;
-    LocationDto location;
-    boolean paid;
+    Location location;
+    Boolean paid;
     Integer participantLimit;
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = FORMAT)
-    LocalDateTime publishedOn;
-    boolean requestModeration;
     State state;
+    Boolean requestModeration;
     String title;
-    Integer views;
-
+    Long views;
 }

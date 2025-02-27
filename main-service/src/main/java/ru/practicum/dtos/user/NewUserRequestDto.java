@@ -14,12 +14,13 @@ import lombok.experimental.FieldDefaults;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class NewUserRequest {
+public class NewUserRequestDto {
 
     @NotBlank
     @Size(min = 6, max = 254)
     @Email
     String email;
+
     @NotBlank
     @Size(min = 2, max = 250)
     String name;

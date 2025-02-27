@@ -17,14 +17,15 @@ import static ru.practicum.dtos.utils.DateTimeFormatter.FORMAT;
 @AllArgsConstructor
 @Builder
 public class EventShortDto {
-    Integer id;
+    Long id;
     String annotation;
     CategoryDto category;
     Integer confirmedRequests;
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = FORMAT)
     LocalDateTime eventDate;
+    LocalDateTime publishedOn;
     UserShortDto initiator;
-    boolean paid;
+    Boolean paid;
     String title;
-    Integer views;
+    Long views;
 }

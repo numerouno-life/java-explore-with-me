@@ -13,7 +13,7 @@ import lombok.experimental.FieldDefaults;
 @Builder
 public class CategoryDto {
 
-    Integer id;
+    Long id;
 
     @NotBlank
     @Size(min = 1, max = 50)

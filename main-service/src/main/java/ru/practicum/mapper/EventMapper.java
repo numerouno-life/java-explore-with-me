@@ -1,68 +1,71 @@
 package ru.practicum.mapper;
 
 import lombok.experimental.UtilityClass;
-import ru.practicum.dtos.category.CategoryDto;
-import ru.practicum.dtos.event.*;
+import ru.practicum.dtos.event.EventFullDto;
+import ru.practicum.dtos.event.EventShortDto;
+import ru.practicum.dtos.event.NewEventDto;
+import ru.practicum.enums.State;
 import ru.practicum.model.Category;
 import ru.practicum.model.Event;
 import ru.practicum.model.Location;
+import ru.practicum.model.User;
 
 import java.time.LocalDateTime;
 
 @UtilityClass
 public class EventMapper {
-
-    public Event toEntity(NewEventDto newEventDtoDto, Location location, Category category) {
+    public Event mapToEvent(NewEventDto eventDto, Category category, User initiator) {
         return Event.builder()
-                .eventDate(newEventDtoDto.getEventDate())
-                .annotation(newEventDtoDto.getAnnotation())
+                .eventDate(eventDto.getEventDate())
+                .annotation(eventDto.getAnnotation())
+                .paid(eventDto.isPaid())
                 .category(category)
-                .location(location)
-                .eventDate(newEventDtoDto.getEventDate())
-                .paid(newEventDtoDto.isPaid())
-                .participantLimit(newEventDtoDto.getParticipantLimit())
-                .requestModeration(newEventDtoDto.isRequestModeration())
-                .title(newEventDtoDto.getTitle())
-                .description(newEventDtoDto.getDescription())
-                .created(LocalDateTime.now())
+                .confirmedRequests(0)
+                .createdOn(LocalDateTime.now())
+                .description(eventDto.getDescription())
+                .state(State.PENDING)
+                .title(eventDto.getTitle())
+                .lat(eventDto.getLocation().getLat())
+                .lon(eventDto.getLocation().getLon())
+                .participantLimit(eventDto.getParticipantLimit())
+                .requestModeration(eventDto.isRequestModeration())
+                .initiator(initiator)
                 .build();
     }
 
-    public EventFullDto mapToEventFullDto(Event event) {
+    public EventFullDto mapToFullDto(Event event, Long views) {
         return EventFullDto.builder()
                 .id(event.getId())
                 .annotation(event.getAnnotation())
-                .category(event.getCategory() == null ? new CategoryDto() : CategoryMapper.toDto(event.getCategory()))
-                .initiator(UserMapper.toUserShortDto(event.getInitiator()))
-                .title(event.getTitle())
+                .category(CategoryMapper.toCategoryDto(event.getCategory()))
+                .confirmedRequests(event.getConfirmedRequests())
+                .createdOn(event.getCreatedOn())
+                .publishedOn(event.getPublishedOn())
                 .description(event.getDescription())
-                .build();
-    }
-
-    public EventShortDto mapToEventShortDto(Event event) {
-        return EventShortDto.builder()
-                .id(event.getId())
-                .annotation(event.getAnnotation())
-                .category((event.getCategory() == null) ? new CategoryDto() : CategoryMapper.toDto(event.getCategory()))
-                .initiator(UserMapper.toUserShortDto(event.getInitiator()))
-                .title(event.getTitle())
-                .confirmedRequests(event.getConfirmedRequest())
                 .eventDate(event.getEventDate())
+                .initiator(UserMapper.toUserShortDto(event.getInitiator()))
+                .location(Location.builder().lat(event.getLat()).lon(event.getLon()).build())
                 .paid(event.getPaid())
-                .views(event.getViews())
+                .views(views)
+                .participantLimit(event.getParticipantLimit())
+                .requestModeration(event.getRequestModeration())
+                .state(event.getState())
+                .title(event.getTitle())
                 .build();
     }
 
-
-    public UpdateEventAdminRequest mapToUpdateEventAdminRequest(UpdateEventUserRequest updateEventUserRequest) {
-        return UpdateEventAdminRequest.builder()
-                .annotation(updateEventUserRequest.getAnnotation())
-                .category(updateEventUserRequest.getCategory())
-                .description(updateEventUserRequest.getDescription())
-                .eventDate(updateEventUserRequest.getEventDate())
-                .paid(updateEventUserRequest.isPaid())
-                .participantLimit(updateEventUserRequest.getParticipantLimit())
-                .title(updateEventUserRequest.getTitle())
+    public EventShortDto mapToShortDto(Event event, Long views) {
+        return EventShortDto.builder()
+                .annotation(event.getAnnotation())
+                .category(CategoryMapper.toCategoryDto(event.getCategory()))
+                .confirmedRequests(event.getConfirmedRequests())
+                .eventDate(event.getEventDate())
+                .publishedOn(event.getPublishedOn())
+                .id(event.getId())
+                .initiator(UserMapper.toUserShortDto(event.getInitiator()))
+                .paid(event.getPaid())
+                .title(event.getTitle())
+                .views(views)
                 .build();
     }
 }

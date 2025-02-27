@@ -18,17 +18,17 @@ import static ru.practicum.dtos.utils.DateTimeFormatter.FORMAT;
 @Builder
 public class ParticipationRequestDto {
 
-    Integer id;
+    Long id;
 
     @NotNull
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = FORMAT)
     LocalDateTime created;
 
     @NotNull
-    Integer event; // Идентификатор события
+    Long event; // Идентификатор события
 
     @NotNull
-    Integer requester; // Идентификатор пользователя
+    Long requester; // Идентификатор пользователя
 
     @NotNull
     Status status;

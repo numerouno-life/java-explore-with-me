@@ -2,29 +2,26 @@ package ru.practicum.model;
 
 import jakarta.persistence.*;
 import lombok.*;
-import lombok.experimental.Accessors;
 import lombok.experimental.FieldDefaults;
 
 @Entity
 @Table(name = "users")
+@ToString
 @Getter
 @Setter
-@Builder
-@ToString
-@EqualsAndHashCode(of = "id")
-@Accessors(chain = true)
-@FieldDefaults(level = AccessLevel.PRIVATE)
-@NoArgsConstructor
 @AllArgsConstructor
+@NoArgsConstructor
+@FieldDefaults(level = AccessLevel.PRIVATE)
+@Builder(toBuilder = true)
 public class User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "user_id")
-    Integer id;
-
-    String name;
+    Long id;
 
     @Column(unique = true)
     String email;
+
+    String name;
 }

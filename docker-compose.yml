@@ -33,13 +33,18 @@ services:
       - SPRING_DATASOURCE_URL=jdbc:postgresql://ewm-db:5432/ewm_db
       - SPRING_DATASOURCE_USERNAME=postgres
       - SPRING_DATASOURCE_PASSWORD=postgres
+      - ewm_service_name=ewm-service
 
   ewm-db:
     image: postgres:16.1
     container_name: ewm-db
     ports:
-      - "6643:5432"
+      - "5432:5432"
     environment:
       - POSTGRES_DB=ewm_db
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
+
+networks:
+  app-network:
+    driver: bridge

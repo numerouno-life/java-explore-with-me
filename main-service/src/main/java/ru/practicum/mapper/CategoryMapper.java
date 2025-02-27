@@ -14,7 +14,7 @@ public class CategoryMapper {
                 .build();
     }
 
-    public CategoryDto toDto(Category category) {
+    public CategoryDto toCategoryDto(Category category) {
         return CategoryDto.builder()
                 .id(category.getId())
                 .name(category.getName())
