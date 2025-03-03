@@ -84,7 +84,7 @@ public class ErrorHandler {
     }
 
     @ExceptionHandler({DuplicateParticipationRequestException.class, InvalidStateException.class,
-            SelfParticipationException.class, DataIntegrityViolationException.class})
+            SelfParticipationException.class, DataIntegrityViolationException.class, DuplicateCategoryException.class})
     @ResponseStatus(HttpStatus.CONFLICT)
     public ApiError handleConflict(final Exception e) {
         log.warn(e.getMessage(), e);
@@ -93,27 +93,38 @@ public class ErrorHandler {
         String reason;
         Map<String, Object> context;
 
-        if (e instanceof DuplicateParticipationRequestException ex) {
-            errorMessage = String.format("Duplicate participation request for event with id=%s", ex.getMessage());
-            reason = "DuplicateParticipationRequestException";
-            context = Map.of("event", ex.getMessage());
-        } else if (e instanceof InvalidStateException ex) {
-            errorMessage = String.format("Invalid state: %s", ex.getMessage());
-            reason = "InvalidStateException";
-            context = Map.of("state", ex.getMessage());
-        } else if (e instanceof SelfParticipationException ex) {
-            errorMessage = "User cannot participate in their own event";
-            reason = "SelfParticipationException";
-            context = Map.of("user", ex.getMessage());
-        } else if (e instanceof DataIntegrityViolationException ex) {
-            errorMessage = "Data integrity violation occurred";
-            reason = "DataIntegrityViolationException";
-            String constraintName = extractConstraintName(ex);
-            context = Map.of("constraint", constraintName, "message", ex.getMessage());
-        } else {
-            errorMessage = "Unexpected conflict error";
-            reason = "ConflictException";
-            context = Map.of("message", e.getMessage());
+        switch (e) {
+            case DuplicateParticipationRequestException ex -> {
+                errorMessage = String.format("Duplicate participation request for event with id=%s", ex.getMessage());
+                reason = "DuplicateParticipationRequestException";
+                context = Map.of("event", ex.getMessage());
+            }
+            case InvalidStateException ex -> {
+                errorMessage = String.format("Invalid state: %s", ex.getMessage());
+                reason = "InvalidStateException";
+                context = Map.of("state", ex.getMessage());
+            }
+            case SelfParticipationException ex -> {
+                errorMessage = "User cannot participate in their own event";
+                reason = "SelfParticipationException";
+                context = Map.of("user", ex.getMessage());
+            }
+            case DataIntegrityViolationException ex -> {
+                errorMessage = "Data integrity violation occurred";
+                reason = "DataIntegrityViolationException";
+                String constraintName = extractConstraintName(ex);
+                context = Map.of("constraint", constraintName, "message", ex.getMessage());
+            }
+            case DuplicateCategoryException ex -> {
+                errorMessage = String.format("Category with name '%s' already exists", ex.getMessage());
+                reason = "DuplicateCategoryException";
+                context = Map.of("categoryName", ex.getMessage());
+            }
+            default -> {
+                errorMessage = "Unexpected conflict error";
+                reason = "ConflictException";
+                context = Map.of("message", e.getMessage());
+            }
         }
 
         return ApiError.builder()

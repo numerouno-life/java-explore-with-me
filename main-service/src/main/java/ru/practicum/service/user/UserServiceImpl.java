@@ -7,8 +7,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.dtos.user.NewUserRequestDto;
 import ru.practicum.dtos.user.UserDto;
+import ru.practicum.error.exception.EntityNotFoundException;
 import ru.practicum.mapper.UserMapper;
-import ru.practicum.model.User;
 import ru.practicum.repository.UserRepository;
 
 import java.util.List;
@@ -48,6 +48,10 @@ public class UserServiceImpl implements UserService {
     @Transactional
     public void deleteUserById(Long userId) {
         log.info("Delete user by id {}", userId);
+        if (!userRepository.existsById(userId)) {
+            log.error("User with id {} not found", userId);
+            throw new EntityNotFoundException("User with id {}" + userId + " not found");
+        }
         userRepository.deleteById(userId);
     }
 }
