@@ -4,8 +4,8 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.validation.constraints.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
-import ru.practicum.dtos.location.LocationDto;
 import ru.practicum.enums.StateAction;
+import ru.practicum.model.Location;
 
 import java.time.LocalDateTime;
 
@@ -19,32 +19,30 @@ import static ru.practicum.dtos.utils.DateTimeFormatter.FORMAT;
 @Builder
 public class UpdateEventUserRequest {
 
-    @NotBlank
     @Size(min = 20, max = 2000)
     String annotation;
 
     @Positive
-    Integer category; // новая категория
+    Long category; // новая категория
 
-    @NotBlank
     @Size(min = 20, max = 7000)
     String description;
 
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = FORMAT)
+    @Future
+    @JsonFormat(pattern = FORMAT)
     LocalDateTime eventDate;
 
-    @NotNull
-    LocationDto location;
+    Location location;
 
-    boolean paid;
+    Boolean paid;
 
     @PositiveOrZero
     Integer participantLimit;
 
-    boolean requestModeration;
+    Boolean requestModeration;
+
     StateAction stateAction;
 
-    @NotBlank
     @Size(min = 3, max = 120)
     String title;
 }

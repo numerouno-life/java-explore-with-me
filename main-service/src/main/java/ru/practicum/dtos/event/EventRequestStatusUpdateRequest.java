@@ -1,5 +1,6 @@
 package ru.practicum.dtos.event;
 
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 import ru.practicum.enums.UpdateStatus;
@@ -15,6 +16,7 @@ import java.util.List;
 @Builder
 public class EventRequestStatusUpdateRequest {
 
-    final List<Integer> requestIds = new ArrayList<>();
+    final List<Long> requestIds = new ArrayList<>();
+    @NotNull
     UpdateStatus status;
 }

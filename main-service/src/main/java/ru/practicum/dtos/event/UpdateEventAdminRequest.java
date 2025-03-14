@@ -24,7 +24,7 @@ public class UpdateEventAdminRequest {
     String annotation;
 
     @Positive
-    Integer category; // новая категория
+    Long category; // новая категория
 
     @NotBlank
     @Size(min = 20, max = 7000)
@@ -36,12 +36,12 @@ public class UpdateEventAdminRequest {
     @NotNull
     LocationDto location;
 
-    boolean paid;
+    Boolean paid;
 
     @PositiveOrZero
     Integer participantLimit;
 
-    boolean requestModeration;
+    Boolean requestModeration;
     StateAction stateAction;
 
     @NotBlank

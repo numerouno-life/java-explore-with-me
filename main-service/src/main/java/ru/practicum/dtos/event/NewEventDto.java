@@ -26,7 +26,7 @@ public class NewEventDto {
     @Size(min = 20, max = 2000)
     String annotation;
     @NotNull
-    Integer category;  // id категории к которой относится событие
+    Long category;  // id категории к которой относится событие
     @NotBlank
     @Size(min = 20, max = 7000)
     String description;

@@ -27,6 +27,9 @@ public class Event {
     @JoinColumn(name = "category_id")
     Category category;
 
+    @Transient
+    private Long views;
+
     @Column(name = "confirmed_requests")
     Integer confirmedRequests;
 
