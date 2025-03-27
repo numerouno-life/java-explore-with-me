@@ -32,7 +32,7 @@ public class EventMapper {
                 .build();
     }
 
-    public EventShortDto mapToShortDto(Event event, Long views) {
+    public EventShortDto mapToShortDto(Event event) {
         return EventShortDto.builder()
                 .annotation(event.getAnnotation())
                 .category(CategoryMapper.toCategoryDto(event.getCategory()))
@@ -43,7 +43,7 @@ public class EventMapper {
                 .initiator(UserMapper.toUserShortDto(event.getInitiator()))
                 .paid(event.getPaid())
                 .title(event.getTitle())
-                .views(views)
+                .views((event.getViews() != null) ? event.getViews() : 0)
                 .build();
     }
 
@@ -107,14 +107,12 @@ public class EventMapper {
                 .participantLimit(event.getParticipantLimit())
                 .requestModeration(event.getRequestModeration())
                 .paid(event.getPaid())
-                .category((event.getCategory() == null) ? new CategoryDto() : CategoryMapper.toCategoryDto(event.getCategory()))
+                .category((event.getCategory() == null) ?
+                        new CategoryDto() : CategoryMapper.toCategoryDto(event.getCategory()))
                 .eventDate(event.getEventDate())
+                .publishedOn(event.getPublishedOn())
                 .location(Location.builder().lat(event.getLat()).lon(event.getLon()).build())
                 .build();
-
-        if (event.getPublishedOn() != null) {
-            build.setPublishedOn(event.getPublishedOn());
-        }
         return build;
     }
 

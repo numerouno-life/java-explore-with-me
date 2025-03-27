@@ -4,7 +4,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
-import ru.practicum.enums.Status;
 import ru.practicum.model.Request;
 
 import java.util.List;
@@ -12,17 +11,14 @@ import java.util.List;
 @Repository
 public interface RequestRepository extends JpaRepository<Request, Long> {
 
-    @Query("""
-            SELECT r.event.id, COUNT(r.id)
-            FROM Request r
-            WHERE r.status = 'CONFIRMED' AND r.event.id IN :eventIds
-            GROUP BY r.event.id
-            """)
-    List<Object[]> countConfirmedRequestsByEventIds(@Param("eventIds") List<Long> eventIds);
+    @Query("SELECT CASE WHEN COUNT(r) > 0 THEN true ELSE false END " +
+            "FROM Request r WHERE r.event.id = :eventId AND r.requester.id = :userId")
+    boolean existsByEventIdAndRequesterId(@Param("eventId") Long eventId, @Param("userId") Long userId);
 
-    Long countByEventIdAndStatus(Long eventId, Status status);
+    List<Request> findByEventId(long eventId);
 
-    List<Request> findAllByEventIdInAndStatus(List<Long> eventIds, Status status);
+    List<Request> findAllByRequesterId(Long userId);
 
-    List<Request> findAllByEventInitiatorIdAndEventId(Long userId, Long eventId);
+    Integer countByEventId(Integer eventId);
+
 }

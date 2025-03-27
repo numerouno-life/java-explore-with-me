@@ -1,81 +1,75 @@
 package ru.practicum;
 
-import jakarta.annotation.Nullable;
+import jakarta.servlet.http.HttpServletRequest;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.web.client.RestTemplateBuilder;
+import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.HttpStatusCode;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Service;
-import org.springframework.web.util.DefaultUriBuilderFactory;
-import org.springframework.web.util.UriComponentsBuilder;
+import org.springframework.stereotype.Component;
+import org.springframework.web.client.RestClient;
 import ru.practicum.dto.EndpointHitDto;
-import ru.practicum.dto.StatDto;
 import ru.practicum.dto.ViewStats;
 
-import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
-import java.util.HashMap;
+import java.time.LocalDateTime;
+import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 
-@Service
-public class StatClient extends BaseClient {
-    @Value("${stats-service.url}")
-    private String serverUrl;
+import static ru.practicum.dto.TimeFormat.FORMATTER;
 
+@Slf4j
+@Component
+public class StatClient {
+    private final RestClient client;
 
-    public StatClient(@Value("${stats-service.url}") String serverUrl, RestTemplateBuilder builder) {
-        super(builder
-                .uriTemplateHandler(new DefaultUriBuilderFactory(serverUrl))
-                .build());
+    public StatClient(@Value("${stats-service.url}") String serverUrl) {
+        this.client = RestClient.create(serverUrl);
+        log.info("Stat-server run URL: {}", serverUrl);
     }
 
-    public ResponseEntity<Object> sendHit(EndpointHitDto endpointHitDto) {
-        return post("/hits", endpointHitDto);
+    public void save(String app, HttpServletRequest request) {
+        log.info("Saving hit for app: {} , uri {}", app, request.getRequestURI());
+        EndpointHitDto dto = getDto(app, request);
+        log.info("Start create request for stat-service");
+        ResponseEntity<Void> response = client.post()
+                .uri("/hit")
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(dto)
+                .retrieve().toBodilessEntity();
+        log.info("Saving hit for app: {} with successful code {}", app, response.getStatusCode());
     }
 
-    public ResponseEntity<Object> getHits(String start, String end, List<String> uris, boolean unique) {
-        Map<String, Object> params = new HashMap<>();
-        params.put("start", start);
-        params.put("end", end);
-        if (uris != null && !uris.isEmpty()) {
-            params.put("uris", String.join(",", uris));
+    public List<ViewStats> getViewStats(LocalDateTime start, LocalDateTime end,
+                                        List<String> uris, boolean unique) {
+        log.info("Getting view stats for uri: {}", uris);
+        try {
+            return client.get()
+                    .uri(uriBuilder -> uriBuilder.path("/stats")
+                            .queryParam("start", start.format(FORMATTER))
+                            .queryParam("end", end.format(FORMATTER))
+                            .queryParam("uris", uris)
+                            .queryParam("unique", unique)
+                            .build())
+                    .retrieve()
+                    .onStatus(HttpStatusCode::is2xxSuccessful,
+                            ((request, response) -> log.info("Getting stats for {} with successful code {}", uris,
+                                    response.getStatusCode())))
+                    .body(new ParameterizedTypeReference<>() {
+                    });
+        } catch (Exception e) {
+            log.error("Getting stats for {} with error {}", uris, e.getMessage());
+            return Collections.emptyList();
         }
-        params.put("unique", unique);
-        return get("/stats", params);
     }
 
-    public ResponseEntity<Object> addStatEvent(StatDto statDto) {
-        UriComponentsBuilder uri = UriComponentsBuilder.fromHttpUrl(serverUrl).path("/hit");
-        String url = uri.build().toUriString();
-        return post(url, statDto);
-    }
-
-    @SuppressWarnings("unchecked")
-    public List<ViewStats> readStatEvent(String start, String end, @Nullable List<String> uris, boolean unique) {
-        UriComponentsBuilder uri = UriComponentsBuilder.fromHttpUrl(serverUrl).path("/stats");
-
-        if (start != null) {
-            uri.queryParam("start", encode(start));
-        }
-        if (end != null) {
-            uri.queryParam("end", encode(end));
-        }
-        if (uris != null) {
-            uri.queryParam("uris", uris);
-        }
-        String url = uri.build().toUriString();
-
-        ResponseEntity<Object> response = get(url, null);
-
-        return (List<ViewStats>) response.getBody();
-    }
-
-
-    private String encode(String value) {
-        if (value != null) {
-            return URLEncoder.encode(value, StandardCharsets.UTF_8);
-        } else {
-            return value;
-        }
+    private EndpointHitDto getDto(String app, HttpServletRequest request) {
+        log.info("Start the build dto for the app {}", app);
+        return EndpointHitDto.builder()
+                .app(app)
+                .uri(request.getRequestURI())
+                .ip(request.getRemoteAddr())
+                .timestamp(LocalDateTime.now())
+                .build();
     }
 }

@@ -1,5 +1,6 @@
 package ru.practicum.controller;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -16,16 +17,16 @@ public class StatsController {
 
     @PostMapping("/hit")
     @ResponseStatus(HttpStatus.CREATED)
-    public void save(@RequestBody EndpointHitDto endpointHitDto) {
+    public void save(@Valid @RequestBody EndpointHitDto endpointHitDto) {
         endpointHitService.saveStat(endpointHitDto);
     }
 
     @GetMapping("/stats")
     @ResponseStatus(HttpStatus.OK)
-    public List<ViewStats> getStatisticsOnVisits(@RequestParam String start,
+    public List<ViewStats> getViewStats(@RequestParam String start,
                                                  @RequestParam String end,
                                                  @RequestParam(required = false) List<String> uris,
                                                  @RequestParam(required = false) boolean unique) {
-        return endpointHitService.getStat(start, end, uris, unique);
+        return endpointHitService.getViewStats(start, end, uris, unique);
     }
 }

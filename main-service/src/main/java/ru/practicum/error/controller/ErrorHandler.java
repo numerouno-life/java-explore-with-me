@@ -53,9 +53,13 @@ public class ErrorHandler {
                 if (parts.length > 1) {
                     context = Map.of("entityId", parts[1].trim());
                     errorMessage = parts[0].trim();
+                } else {
+                    // Если сообщение не содержит ":", добавляем всё сообщение в контекст
+                    context = Map.of("errorMessage", errorMessage);
                 }
             } catch (Exception ignored) {
-
+                // В случае ошибки всё равно добавляем сообщение в контекст
+                context = Map.of("errorMessage", errorMessage);
             }
         }
         return ApiError.builder()
@@ -136,6 +140,20 @@ public class ErrorHandler {
                 .context(context)
                 .build();
     }
+
+    @ExceptionHandler(ParticipantLimitReachedException.class)
+    @ResponseStatus(HttpStatus.CONFLICT)
+    public ApiError handleParticipantLimitReached(ParticipantLimitReachedException ex) {
+        log.warn(ex.getMessage(), ex);
+        return ApiError.builder()
+                .errors(List.of())
+                .message(ex.getMessage())
+                .reason("ParticipantLimitReachedException")
+                .status(HttpStatus.CONFLICT.name())
+                .localDateTime(LocalDateTime.now())
+                .build();
+    }
+
 
     private String extractConstraintName(DataIntegrityViolationException ex) {
         Throwable rootCause = ex.getRootCause();

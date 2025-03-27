@@ -17,13 +17,6 @@ public class UserMapper {
                 .build();
     }
 
-    public User toEntity(UserDto userDto) {
-        return User.builder()
-                .id(userDto.getId())
-                .name(userDto.getName())
-                .build();
-    }
-
     public UserShortDto toUserShortDto(User user) {
         return UserShortDto.builder()
                 .id(user.getId())

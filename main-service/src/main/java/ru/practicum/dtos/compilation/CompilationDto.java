@@ -1,10 +1,11 @@
 package ru.practicum.dtos.compilation;
 
+import jakarta.validation.constraints.Size;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 import ru.practicum.dtos.event.EventShortDto;
 
-import java.util.List;
+import java.util.Set;
 
 @Getter
 @Setter
@@ -15,7 +16,8 @@ import java.util.List;
 public class CompilationDto {
 
     Long id;
-    boolean pinned;
+    Boolean pinned;
+    @Size(min = 1, max = 50)
     String title;
-    List<EventShortDto> events;
+    Set<EventShortDto> events;
 }

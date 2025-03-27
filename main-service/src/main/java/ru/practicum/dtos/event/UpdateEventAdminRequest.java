@@ -1,11 +1,13 @@
 package ru.practicum.dtos.event;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import jakarta.validation.constraints.*;
+import jakarta.validation.constraints.PositiveOrZero;
+import jakarta.validation.constraints.Size;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
-import ru.practicum.dtos.location.LocationDto;
+import ru.practicum.dtos.utils.annotations.EventDate;
 import ru.practicum.enums.StateAction;
+import ru.practicum.model.Location;
 
 import java.time.LocalDateTime;
 
@@ -19,32 +21,20 @@ import static ru.practicum.dtos.utils.DateTimeFormatter.FORMAT;
 @Builder
 public class UpdateEventAdminRequest {
 
-    @NotBlank
     @Size(min = 20, max = 2000)
-    String annotation;
-
-    @Positive
-    Long category; // новая категория
-
-    @NotBlank
+    private String annotation;
+    private Long categoryId;
     @Size(min = 20, max = 7000)
-    String description;
-
+    private String description;
+    @EventDate
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = FORMAT)
-    LocalDateTime eventDate;
-
-    @NotNull
-    LocationDto location;
-
-    Boolean paid;
-
+    private LocalDateTime eventDate;
+    private Location location;
+    private Boolean paid;
     @PositiveOrZero
-    Integer participantLimit;
-
-    Boolean requestModeration;
-    StateAction stateAction;
-
-    @NotBlank
+    private Integer participantLimit;
+    private Boolean requestModeration;
+    private StateAction stateAction;
     @Size(min = 3, max = 120)
-    String title;
+    private String title;
 }

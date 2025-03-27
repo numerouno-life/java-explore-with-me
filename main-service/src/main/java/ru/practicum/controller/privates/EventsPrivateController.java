@@ -3,6 +3,7 @@ package ru.practicum.controller.privates;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.PositiveOrZero;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.dtos.event.*;
@@ -11,6 +12,7 @@ import ru.practicum.service.event.EventService;
 
 import java.util.List;
 
+@Slf4j
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/users/{userId}/events")
@@ -38,7 +40,6 @@ public class EventsPrivateController {
     }
 
     @PatchMapping("/{eventId}")
-    @ResponseStatus(HttpStatus.CREATED)
     public EventFullDto updateEventOfUser(@Valid @RequestBody UpdateEventUserRequest updateRequest,
                                           @PathVariable Long userId,
                                           @PathVariable Long eventId) {
@@ -54,6 +55,8 @@ public class EventsPrivateController {
     public EventRequestStatusUpdateResult updateRequestsStatusOfUserEvent(
             @PathVariable Long userId, @PathVariable Long eventId,
             @RequestBody @Valid EventRequestStatusUpdateRequest eventRequestStatusUpdateRequest) {
+        log.info("Received update request: userId={}, eventId={}, body={}",
+                userId, eventId, eventRequestStatusUpdateRequest);
         return eventsService.updateRequestsStatusOfUserEvent(userId, eventId, eventRequestStatusUpdateRequest);
     }
 }
