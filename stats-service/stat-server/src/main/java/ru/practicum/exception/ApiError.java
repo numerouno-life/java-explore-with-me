@@ -7,6 +7,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -15,7 +16,8 @@ import java.util.Map;
 @AllArgsConstructor
 @Builder
 public class ApiError {
-    private List<String> errors;
+    @Builder.Default
+    private List<String> errors = new ArrayList<>();
     private String message;
     private String reason; // причина ошибки
     private String status;
