@@ -29,11 +29,10 @@ services:
       - stats-server
       - ewm-db
     environment:
-      - CLIENT_URL=http://stats-server:9090
+      - SPRING_PROFILES_ACTIVE=docker
       - SPRING_DATASOURCE_URL=jdbc:postgresql://ewm-db:5432/ewm_db
       - SPRING_DATASOURCE_USERNAME=postgres
       - SPRING_DATASOURCE_PASSWORD=postgres
-      - ewm_service_name=ewm-service
 
   ewm-db:
     image: postgres:16.1
