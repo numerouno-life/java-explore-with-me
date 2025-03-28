@@ -70,7 +70,7 @@ public class UserRequestServiceImpl implements UserRequestService {
         Integer requestCount = requestRepository.countByEventId(Math.toIntExact(eventId));
         log.info("Total participation requests for event {}: {}", eventId, requestCount);
 
-        if (event.getParticipantLimit() > 0 && requestCount >= event.getParticipantLimit()) {
+        if (event.getParticipantLimit() > 0 && requestCount > event.getParticipantLimit()) {
             log.info("The event with id={} has already reached the participant limit", eventId);
             throw new ParticipantLimitReachedException(String.format(
                     "The event with id=%d has already reached the participant limit", eventId));
