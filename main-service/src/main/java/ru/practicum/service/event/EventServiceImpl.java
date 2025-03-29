@@ -155,7 +155,6 @@ public class EventServiceImpl implements EventService {
             log.error("Application confirmation is disabled for this event with ID:{}", eventId);
             throw new ValidationException("Application confirmation is disabled for this event with ID:" + eventId);
         }
-
         if (Objects.equals(event.getConfirmedRequests(), event.getParticipantLimit())) {
             log.error("The participant limit for event with ID: {} has been reached", eventId);
             throw new ParticipantLimitReachedException("The participant limit for event with ID:"
