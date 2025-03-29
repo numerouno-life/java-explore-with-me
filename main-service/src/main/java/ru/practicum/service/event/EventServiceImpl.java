@@ -146,11 +146,7 @@ public class EventServiceImpl implements EventService {
         log.info("Updating requests status of user {} for event {}", userId, eventId);
         checkUserExists(userId);
         Event event = findEventById(eventId);
-        if (Objects.equals(event.getConfirmedRequests(), event.getParticipantLimit())) {
-            log.error("The participant limit for event with ID: {} has been reached", eventId);
-            throw new ParticipantLimitReachedException("The participant limit for event with ID:"
-                    + eventId + " has been reached");
-        }
+
         if (!event.getInitiator().getId().equals(userId)) {
             log.warn("User with id {} is not initiator of event with id {}", userId, eventId);
             throw new SelfParticipationException("User is not initiator of event");
@@ -158,6 +154,12 @@ public class EventServiceImpl implements EventService {
         if (event.getParticipantLimit() == 0 || !event.getRequestModeration()) {
             log.error("Application confirmation is disabled for this event with ID:{}", eventId);
             throw new ValidationException("Application confirmation is disabled for this event with ID:" + eventId);
+        }
+
+        if (Objects.equals(event.getConfirmedRequests(), event.getParticipantLimit())) {
+            log.error("The participant limit for event with ID: {} has been reached", eventId);
+            throw new ParticipantLimitReachedException("The participant limit for event with ID:"
+                    + eventId + " has been reached");
         }
         List<Long> requestIds = updateRequest.getRequestIds();
         List<Request> requests = requestRepository.findAllById(requestIds);
