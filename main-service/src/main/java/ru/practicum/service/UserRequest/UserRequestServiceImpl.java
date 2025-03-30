@@ -67,7 +67,7 @@ public class UserRequestServiceImpl implements UserRequestService {
                     "cannot add a request to participate in his event with id=%d", userId, eventId));
         }
 
-        Integer requestCount = requestRepository.countByEventId(eventId);
+        Integer requestCount = requestRepository.countByEventIdAndStatus(eventId, Status.CONFIRMED);
         log.info("Total participation requests for event {}: {}", eventId, requestCount);
 
         if (event.getParticipantLimit() > 0 && requestCount >= event.getParticipantLimit()) {
