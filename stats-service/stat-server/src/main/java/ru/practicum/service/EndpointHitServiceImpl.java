@@ -31,7 +31,7 @@ public class EndpointHitServiceImpl implements EndpointHitService {
 
     @Transactional
     @Override
-    public List<ViewStats> getStat(String start, String end, List<String> uris, boolean unique) {
+    public List<ViewStats> getViewStats(String start, String end, List<String> uris, boolean unique) {
         log.info("get statistics on visits: start={}, end={}, uris={}, unique={}", start, end, uris, unique);
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
         LocalDateTime startDateTime = LocalDateTime.parse(start, formatter);

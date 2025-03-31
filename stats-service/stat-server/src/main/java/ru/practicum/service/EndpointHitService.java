@@ -9,5 +9,5 @@ public interface EndpointHitService {
 
     void saveStat(EndpointHitDto statDto);
 
-    List<ViewStats> getStat(String start, String end, List<String> uris, boolean unique);
+    List<ViewStats> getViewStats(String start, String end, List<String> uris, boolean unique);
 }
