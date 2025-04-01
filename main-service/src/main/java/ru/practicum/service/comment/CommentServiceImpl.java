@@ -8,6 +8,10 @@ import ru.practicum.dtos.comment.CommentDto;
 import ru.practicum.dtos.comment.NewCommentDto;
 import ru.practicum.dtos.comment.UpdateCommentDto;
 import ru.practicum.enums.StatusComment;
+import ru.practicum.error.exception.EntityNotFoundException;
+import ru.practicum.mapper.CommentMapper;
+import ru.practicum.repository.EventRepository;
+import ru.practicum.repository.UserRepository;
 
 import java.util.List;
 
@@ -16,7 +20,9 @@ import java.util.List;
 @Transactional
 @RequiredArgsConstructor
 public class CommentServiceImpl implements CommentService {
-
+    private final UserRepository userRepository;
+    private final EventRepository eventRepository;
+    private final CommentMapper commentMapper;
 
     @Override
     public List<CommentDto> getAllCommentsByText(String text, Integer from, Integer size) {
@@ -73,5 +79,12 @@ public class CommentServiceImpl implements CommentService {
     @Override
     public CommentDto addNewReply(Long eventId, Long parentCommentId, CommentDto commentDto) {
         return null;
+    }
+
+    @Override
+    public String getUserNameById(Long userId) {
+        return userRepository.findById(userId)
+                .orElseThrow(() -> new EntityNotFoundException("User not found with ID: " + userId))
+                .getName();
     }
 }

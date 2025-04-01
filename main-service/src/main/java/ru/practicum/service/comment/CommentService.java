@@ -30,4 +30,6 @@ public interface CommentService {
     void deleteCommentById(Long userId, Long eventId);
 
     CommentDto addNewReply(Long eventId, Long parentCommentId, CommentDto commentDto);
+
+    String getUserNameById(Long userId);
 }
