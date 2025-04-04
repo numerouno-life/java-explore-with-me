@@ -19,7 +19,7 @@ import java.util.List;
 @RequestMapping("/comments/users/{userId}")
 public class CommentPrivateController {
 
-    private CommentService commentService;
+    private final CommentService commentService;
 
     @GetMapping("/comments")
     public List<CommentDto> getAllCommentsAboutUser(@PathVariable @PositiveOrZero Long userId) {
@@ -28,26 +28,28 @@ public class CommentPrivateController {
     }
 
     @GetMapping("/{commentId}")
-    public List<CommentDto> getCommentById(@PathVariable @PositiveOrZero Long commentId) {
-        log.info("GET /comments/{}", commentId);
-        return commentService.getInfoAboutCommentById(commentId);
+    public CommentDto getCommentById(@PathVariable @PositiveOrZero Long userId,
+                                     @PathVariable @PositiveOrZero Long commentId) {
+        log.info("GET /comments/users/{}/comments/{}", userId, commentId);
+        return commentService.getCommentById(userId, commentId);
     }
 
     @PostMapping("/events/{eventId}")
     @ResponseStatus(HttpStatus.CREATED)
     public CommentDto addNewComment(@PathVariable @PositiveOrZero Long userId,
+                                    @PathVariable @PositiveOrZero Long eventId,
                                     @RequestBody @Valid NewCommentDto newCommentDto) {
         log.info("POST /comments/users/{}/events", userId);
-        return commentService.addNewComment(userId, newCommentDto);
+        return commentService.addNewComment(userId, eventId, newCommentDto);
     }
 
     @PatchMapping("/{commentId}")
     @ResponseStatus(HttpStatus.OK)
-    public CommentDto updateCommentById(@PathVariable @PositiveOrZero Long userId,
-                                        @PathVariable @PositiveOrZero Long commentId,
-                                        @RequestBody @Valid UpdateCommentDto updateCommentDto) {
+    public CommentDto updateCommentByUser(@PathVariable @PositiveOrZero Long userId,
+                                          @PathVariable @PositiveOrZero Long commentId,
+                                          @RequestBody @Valid UpdateCommentDto updateCommentDto) {
         log.info("PATCH /comments/users/{}/comments/{}", userId, commentId);
-        return commentService.updateCommentById(userId, commentId, updateCommentDto);
+        return commentService.updateCommentByUser(userId, commentId, updateCommentDto);
     }
 
     @DeleteMapping("/{commentId}")

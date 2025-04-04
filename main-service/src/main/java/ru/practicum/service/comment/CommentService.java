@@ -17,17 +17,17 @@ public interface CommentService {
 
     void deleteCommentByIdFromAdmin(Long commentId);
 
-    List<CommentDto> getCommentsAboutEvent(Long eventId);
+    List<CommentDto> getCommentsAboutEvent(Long eventId, Integer from, Integer size);
 
     List<CommentDto> getAllCommentsAboutUser(Long userId);
 
-    List<CommentDto> getInfoAboutCommentById(Long commentId);
+    CommentDto getCommentById(Long userId, Long commentId);
 
-    CommentDto addNewComment(Long userId, NewCommentDto newCommentDto);
+    CommentDto addNewComment(Long userId, Long eventId, NewCommentDto newCommentDto);
 
-    CommentDto updateCommentById(Long userId, Long eventId, UpdateCommentDto updateCommentDto);
+    CommentDto updateCommentByUser(Long userId, Long commentId, UpdateCommentDto updateCommentDto);
 
-    void deleteCommentById(Long userId, Long eventId);
+    void deleteCommentById(Long userId, Long commentId);
 
     CommentDto addNewReply(Long eventId, Long parentCommentId, CommentDto commentDto);
 

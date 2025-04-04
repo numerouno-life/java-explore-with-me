@@ -20,6 +20,7 @@ public class CommentDto {
     Long id;
     String text;
     String authorName;
+    Long authorId;
     Long eventId;
 
     @JsonFormat(pattern = FORMAT)

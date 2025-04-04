@@ -2,18 +2,29 @@ package ru.practicum.service.comment;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.dtos.comment.CommentDto;
 import ru.practicum.dtos.comment.NewCommentDto;
 import ru.practicum.dtos.comment.UpdateCommentDto;
+import ru.practicum.enums.State;
 import ru.practicum.enums.StatusComment;
 import ru.practicum.error.exception.EntityNotFoundException;
+import ru.practicum.error.exception.SelfParticipationException;
+import ru.practicum.error.exception.ValidationException;
 import ru.practicum.mapper.CommentMapper;
+import ru.practicum.model.Comment;
+import ru.practicum.model.Event;
+import ru.practicum.model.User;
+import ru.practicum.repository.CommentRepository;
 import ru.practicum.repository.EventRepository;
 import ru.practicum.repository.UserRepository;
 
+import java.time.LocalDateTime;
+import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 @Slf4j
 @Service
@@ -22,6 +33,7 @@ import java.util.List;
 public class CommentServiceImpl implements CommentService {
     private final UserRepository userRepository;
     private final EventRepository eventRepository;
+    private final CommentRepository commentRepository;
     private final CommentMapper commentMapper;
 
     @Override
@@ -47,33 +59,89 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Override
-    public List<CommentDto> getCommentsAboutEvent(Long eventId) {
-        return List.of();
+    @Transactional(readOnly = true)
+    public List<CommentDto> getCommentsAboutEvent(Long eventId, Integer from, Integer size) {
+        log.info("Getting all comments about event with ID {}", eventId);
+        Event event = createEventById(eventId);
+        if (!event.getState().equals(State.PUBLISHED)) {
+            log.warn("Event with ID {} is not published. Cannot get comments", eventId);
+            throw new ValidationException("Event is not published. Cannot get comments");
+        }
+        PageRequest pageRequest = PageRequest.of(from / size, size);
+        List<Comment> comments = commentRepository.findAllByEventIdAndStatusAndIsDeletedFalse(
+                eventId, StatusComment.PUBLISHED, pageRequest);
+        return Optional.of(comments)
+                .filter(c -> !c.isEmpty())
+                .map(c -> c.stream()
+                        .map(commentMapper::mapToCommentDto)
+                        .toList()).orElse(Collections.emptyList());
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<CommentDto> getAllCommentsAboutUser(Long userId) {
-        return List.of();
+        log.info("Getting all comments about user with ID {}", userId);
+        checkUserExists(userId);
+        List<Comment> comments = commentRepository.findAllByAuthorIdAndStatusAndIsDeletedFalse(
+                userId, StatusComment.PUBLISHED);
+        return Optional.of(comments)
+                .filter(c -> !c.isEmpty())
+                .map(c -> c.stream()
+                        .map(commentMapper::mapToCommentDto)
+                        .toList()).orElse(Collections.emptyList());
     }
 
     @Override
-    public List<CommentDto> getInfoAboutCommentById(Long commentId) {
-        return List.of();
+    public CommentDto getCommentById(Long userId, Long commentId) {
+        log.info("Getting comment by ID {}", commentId);
+        checkUserExists(userId);
+        return commentMapper.mapToCommentDto(commentRepository.findByIdAndAuthorIdAndIsDeletedFalse(
+                commentId, userId).orElseThrow(
+                () -> new EntityNotFoundException("Comment not found with ID: " + commentId)));
     }
 
     @Override
-    public CommentDto addNewComment(Long userId, NewCommentDto newCommentDto) {
-        return null;
+    @Transactional
+    public CommentDto addNewComment(Long userId, Long eventId, NewCommentDto newCommentDto) {
+        log.info("Adding new comment of user with ID {}", userId);
+        User user = createUserById(userId);
+        Event event = createEventById(eventId);
+        if (event.getState().equals(State.PUBLISHED)) {
+            log.warn("Event with ID {} is already published. Cannot add new comment", eventId);
+            throw new ValidationException("Event is already published. Cannot add new comment");
+        }
+        Comment comment = commentMapper.mapToComment(newCommentDto, user, event);
+        comment.setStatus(StatusComment.CHECKING);
+        comment = commentRepository.save(comment);
+        log.info("Comment with ID {} has been added successfully", comment.getId());
+        return commentMapper.mapToCommentDto(comment);
     }
 
     @Override
-    public CommentDto updateCommentById(Long userId, Long eventId, UpdateCommentDto updateCommentDto) {
-        return null;
+    @Transactional
+    public CommentDto updateCommentByUser(Long userId, Long commentId, UpdateCommentDto updateCommentDto) {
+        log.info("Updating comment from user with ID {}, for comment with ID {}", userId, commentId);
+        User user = createUserById(userId);
+        Comment comment = createCommentById(commentId);
+        checkCommentByAuthor(user, comment);
+        comment.setText(updateCommentDto.getText());
+        comment.setUpdated(LocalDateTime.now());
+        commentRepository.save(comment);
+        log.info("Comment with ID {} has been updated successfully", comment.getId());
+        return commentMapper.mapToCommentDto(comment);
     }
 
     @Override
-    public void deleteCommentById(Long userId, Long eventId) {
-
+    @Transactional
+    public void deleteCommentById(Long userId, Long commentId) {
+        log.info("Deleting comment from user with ID {}, for comment with ID {}", userId, commentId);
+        User user = createUserById(userId);
+        Comment comment = createCommentById(commentId);
+        checkCommentByAuthor(user, comment);
+        comment.setIsDeleted(true);
+        comment.setStatus(StatusComment.DELETED);
+        commentRepository.save(comment);
+        log.info("Comment with ID {} has been soft-deleted successfully", commentId);
     }
 
     @Override
@@ -86,5 +154,33 @@ public class CommentServiceImpl implements CommentService {
         return userRepository.findById(userId)
                 .orElseThrow(() -> new EntityNotFoundException("User not found with ID: " + userId))
                 .getName();
+    }
+
+    private Event createEventById(Long eventId) {
+        return eventRepository.findById(eventId).orElseThrow(
+                () -> new EntityNotFoundException("Event not found with ID: " + eventId));
+    }
+
+    private User createUserById(Long userId) {
+        return userRepository.findById(userId).orElseThrow(
+                () -> new EntityNotFoundException("User not found with ID: " + userId));
+    }
+
+    private Comment createCommentById(Long commentId) {
+        return commentRepository.findById(commentId).orElseThrow(
+                () -> new EntityNotFoundException("Comment not found with ID: " + commentId));
+    }
+
+    private void checkUserExists(Long userId) {
+        if (!userRepository.existsById(userId)) {
+            throw new EntityNotFoundException("User with ID: " + userId + " not found");
+        }
+    }
+
+    private void checkCommentByAuthor(User user, Comment comment) {
+        if (!comment.getAuthor().equals(user)) {
+            log.warn("User with ID {} is not the author of the comment with ID {}", user.getId(), comment.getId());
+            throw new SelfParticipationException("User is not the author of the comment");
+        }
     }
 }
