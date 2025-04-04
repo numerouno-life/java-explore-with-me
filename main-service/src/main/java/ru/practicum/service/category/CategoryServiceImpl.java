@@ -34,7 +34,7 @@ public class CategoryServiceImpl implements CategoryService {
             Category category = categoryRepository.save(CategoryMapper.toNewCategoryDto(newCategoryDto));
             return CategoryMapper.toCategoryDto(category);
         } catch (DataIntegrityViolationException e) {
-            throw new DuplicateCategoryException("Категория с таким именем уже существует");
+            throw new DuplicateCategoryException("Category already exists with name:" + newCategoryDto.getName());
         }
     }
 
