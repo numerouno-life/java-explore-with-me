@@ -5,6 +5,7 @@ import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 import ru.practicum.enums.StatusComment;
 
 import java.time.LocalDateTime;
@@ -48,6 +49,7 @@ public class Comment {
     LocalDateTime created;
 
     @Column(name = "updated")
+    @UpdateTimestamp
     LocalDateTime updated;
 
     @Column(name = "is_deleted", nullable = false)

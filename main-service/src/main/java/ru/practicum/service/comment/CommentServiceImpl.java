@@ -37,7 +37,8 @@ public class CommentServiceImpl implements CommentService {
     private final CommentMapper commentMapper;
 
     @Override
-    public List<CommentDto> getAllCommentsByText(String text, Integer from, Integer size) {
+    public List<CommentDto> getAllCommentsByText(String text, StatusComment statusComment,
+                                                 Integer from, Integer size) {
         return List.of();
     }
 
@@ -49,13 +50,35 @@ public class CommentServiceImpl implements CommentService {
     @Transactional
     @Override
     public CommentDto updateCommentStatusByAdmin(Long commentId, StatusComment status) {
-        return null;
+        log.info("Updating status of comment with ID {} by admin", commentId);
+        Comment comment = createCommentById(commentId);
+        if (comment.getStatus().equals(StatusComment.PUBLISHED)) {
+            log.warn("Comment with ID {} is not in CHECKING state. Cannot update status", commentId);
+            throw new ValidationException("Comment is not in CHECKING state. Cannot update status");
+        }
+        comment.setStatus(status);
+        commentRepository.save(comment);
+        log.info("Status of comment with ID {} has been updated successfully", commentId);
+        return commentMapper.mapToCommentDto(comment);
     }
 
     @Transactional
     @Override
     public void deleteCommentByIdFromAdmin(Long commentId) {
+        log.info("Deleting comment with ID {} from admin", commentId);
+        Comment comment = createCommentById(commentId);
+        comment.setIsDeleted(true);
+        commentRepository.save(comment);
+        comment.setStatus(StatusComment.DELETED);
+        log.info("Comment with ID {} has been soft-deleted by admin successfully", commentId);
+    }
 
+    @Transactional
+    @Override
+    public void hardDeleteComment(Long commentId) {
+        log.info("Hard deleting comment with ID {}", commentId);
+        commentRepository.delete(createCommentById(commentId));
+        log.info("Comment with ID {} has been hard-deleted by admin successfully", commentId);
     }
 
     @Override
@@ -79,7 +102,7 @@ public class CommentServiceImpl implements CommentService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<CommentDto> getAllCommentsAboutUser(Long userId) {
+    public List<CommentDto> getUserAuthoredComments(Long userId) {
         log.info("Getting all comments about user with ID {}", userId);
         checkUserExists(userId);
         List<Comment> comments = commentRepository.findAllByAuthorIdAndStatusAndIsDeletedFalse(
@@ -106,9 +129,9 @@ public class CommentServiceImpl implements CommentService {
         log.info("Adding new comment of user with ID {}", userId);
         User user = createUserById(userId);
         Event event = createEventById(eventId);
-        if (event.getState().equals(State.PUBLISHED)) {
-            log.warn("Event with ID {} is already published. Cannot add new comment", eventId);
-            throw new ValidationException("Event is already published. Cannot add new comment");
+        if (!event.getState().equals(State.PUBLISHED)) {
+            log.warn("Event with ID {} is not published. Cannot add new comment", eventId);
+            throw new ValidationException("Event is not published. Cannot add new comment");
         }
         Comment comment = commentMapper.mapToComment(newCommentDto, user, event);
         comment.setStatus(StatusComment.CHECKING);
@@ -141,7 +164,7 @@ public class CommentServiceImpl implements CommentService {
         comment.setIsDeleted(true);
         comment.setStatus(StatusComment.DELETED);
         commentRepository.save(comment);
-        log.info("Comment with ID {} has been soft-deleted successfully", commentId);
+        log.info("Comment with ID {} has been soft-deleted by User with ID {} successfully", commentId, userId);
     }
 
     @Override

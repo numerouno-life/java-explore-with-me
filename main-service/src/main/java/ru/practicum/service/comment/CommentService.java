@@ -9,7 +9,7 @@ import java.util.List;
 
 public interface CommentService {
 
-    List<CommentDto> getAllCommentsByText(String text, Integer from, Integer size);
+    List<CommentDto> getAllCommentsByText(String text, StatusComment status, Integer from, Integer size);
 
     List<CommentDto> getCommentsForModeration(Integer from, Integer size);
 
@@ -17,9 +17,11 @@ public interface CommentService {
 
     void deleteCommentByIdFromAdmin(Long commentId);
 
+    void hardDeleteComment(Long commentId);
+
     List<CommentDto> getCommentsAboutEvent(Long eventId, Integer from, Integer size);
 
-    List<CommentDto> getAllCommentsAboutUser(Long userId);
+    List<CommentDto> getUserAuthoredComments(Long userId);
 
     CommentDto getCommentById(Long userId, Long commentId);
 

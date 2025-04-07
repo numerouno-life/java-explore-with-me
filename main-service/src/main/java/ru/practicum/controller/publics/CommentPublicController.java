@@ -15,13 +15,13 @@ import java.util.List;
 @RequestMapping("/comments")
 public class CommentPublicController {
 
-    private CommentService commentService;
+    private final CommentService commentService;
 
     @GetMapping("/{eventId}")
     public List<CommentDto> getCommentsAboutEvent(@PathVariable @PositiveOrZero Long eventId,
                                                   @PositiveOrZero @RequestParam(defaultValue = "0") Integer from,
                                                   @RequestParam(defaultValue = "10") Integer size) {
-        log.info("GET /comments/users/{}", eventId);
+        log.info("GET /comments/{eventId}:{}", eventId);
         return commentService.getCommentsAboutEvent(eventId, from, size);
     }
 }

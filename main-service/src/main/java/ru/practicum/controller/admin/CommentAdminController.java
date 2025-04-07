@@ -17,14 +17,15 @@ import java.util.List;
 @RequestMapping("/admin/comments")
 public class CommentAdminController {
 
-    private CommentService commentService;
+    private final CommentService commentService;
 
     @GetMapping("/search")
     public List<CommentDto> getAllCommentsBySearch(@RequestParam String search,
+                                                   @RequestParam(required = false) StatusComment status,
                                                    @PositiveOrZero @RequestParam(defaultValue = "0") Integer from,
                                                    @RequestParam(defaultValue = "10") Integer size) {
         log.info("GET /admin/comments/search");
-        return commentService.getAllCommentsByText(search, from, size);
+        return commentService.getAllCommentsByText(search, status, from, size);
     }
 
     @GetMapping("/checking")
@@ -37,7 +38,7 @@ public class CommentAdminController {
     @PatchMapping("/{commentId}")
     @ResponseStatus(HttpStatus.OK)
     public CommentDto updateCommentStatusByAdmin(@PathVariable @PositiveOrZero Long commentId,
-                                                 @RequestParam(required = false) StatusComment status) {
+                                                 @RequestBody StatusComment status) {
         log.info("PATCH /admin/comments/{}", commentId);
         return commentService.updateCommentStatusByAdmin(commentId, status);
     }
@@ -48,5 +49,13 @@ public class CommentAdminController {
         log.info("DELETE /admin/comments/{}", commentId);
         commentService.deleteCommentByIdFromAdmin(commentId);
     }
+
+    @DeleteMapping("/{commentId}/hard")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void hardDeleteComment(@PathVariable @PositiveOrZero Long commentId) {
+        log.info("HARD DELETE /admin/comments/{}", commentId);
+        commentService.hardDeleteComment(commentId);
+    }
+
 
 }
