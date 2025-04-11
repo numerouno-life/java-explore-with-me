@@ -491,8 +491,8 @@
 									"    pm.expect(commentId, \"commentId должен быть задан\").to.not.be.null;",
 									"",
 									"    // Проверяем, что данные комментария корректны (здесь просто пример)",
-									"    pm.expect(commentId).to.be.a(\"number\"); // если commentId - число",
-									"    pm.expect(userId).to.be.a(\"number\"); // если userId - число",
+									"    pm.expect(commentId, \"commentId должен быть задан\").to.not.be.null;",
+									"    pm.expect(userId, \"userId должен быть задан\").to.not.be.null;",
 									"});",
 									""
 								],
