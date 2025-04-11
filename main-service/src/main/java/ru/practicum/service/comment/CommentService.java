@@ -2,6 +2,7 @@ package ru.practicum.service.comment;
 
 import ru.practicum.dtos.comment.CommentDto;
 import ru.practicum.dtos.comment.NewCommentDto;
+import ru.practicum.dtos.comment.StatusUpdateDto;
 import ru.practicum.dtos.comment.UpdateCommentDto;
 import ru.practicum.enums.StatusComment;
 
@@ -9,11 +10,11 @@ import java.util.List;
 
 public interface CommentService {
 
-    List<CommentDto> getAllCommentsByText(String text, StatusComment status, Integer from, Integer size);
+    List<CommentDto> getAllCommentsByFilter(String text, StatusComment status, Integer from, Integer size);
 
-    List<CommentDto> getCommentsForModeration(Integer from, Integer size);
+    CommentDto getCommentByIdFromAdmin(Long commentId);
 
-    CommentDto updateCommentStatusByAdmin(Long commentId, StatusComment status);
+    CommentDto updateCommentStatusByAdmin(Long commentId, StatusUpdateDto status);
 
     void deleteCommentByIdFromAdmin(Long commentId);
 
@@ -31,7 +32,7 @@ public interface CommentService {
 
     void deleteCommentById(Long userId, Long commentId);
 
-    CommentDto addNewReply(Long eventId, Long parentCommentId, CommentDto commentDto);
+    CommentDto addNewReply(Long userId, Long eventId, Long parentCommentId, NewCommentDto newCommentDto);
 
     String getUserNameById(Long userId);
 }

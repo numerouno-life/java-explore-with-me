@@ -22,6 +22,7 @@ public class CommentDto {
     String authorName;
     Long authorId;
     Long eventId;
+    Long parentId;
 
     @JsonFormat(pattern = FORMAT)
     LocalDateTime created;

@@ -63,10 +63,11 @@ public class CommentPrivateController {
 
     @PostMapping("/events/{eventId}/comments/{parentCommentId}/replies")
     @ResponseStatus(HttpStatus.CREATED)
-    public CommentDto addNewReply(@PathVariable @PositiveOrZero Long eventId,
+    public CommentDto addNewReply(@PathVariable @PositiveOrZero Long userId,
+                                  @PathVariable @PositiveOrZero Long eventId,
                                   @PathVariable @PositiveOrZero Long parentCommentId,
-                                  @RequestBody @Valid CommentDto commentDto) {
+                                  @RequestBody @Valid NewCommentDto newCommentDto) {
         log.info("POST /admin/comments/events/{}/comments/{}/replies", eventId, parentCommentId);
-        return commentService.addNewReply(eventId, parentCommentId, commentDto);
+        return commentService.addNewReply(userId, eventId, parentCommentId, newCommentDto);
     }
 }
