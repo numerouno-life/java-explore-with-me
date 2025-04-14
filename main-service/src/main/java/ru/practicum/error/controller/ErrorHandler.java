@@ -40,6 +40,7 @@ public class ErrorHandler {
                     .toList();
 
             context = Map.of("invalidFieldsCount", errors.size());
+            errorMessage = ex.getMessage();
         } else if (e instanceof MissingServletRequestParameterException ex) {
             errorMessage = String.format("Required parameter '%s' is missing", ex.getParameterName());
             reason = "MissingServletRequestParameterException";
