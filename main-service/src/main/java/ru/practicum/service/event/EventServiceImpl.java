@@ -463,4 +463,9 @@ public class EventServiceImpl implements EventService {
                 () -> new EntityNotFoundException("Event with id={} not found"));
     }
 
+    public void validateUserAndEvent(Long eventId, Long userId) {
+        checkUserExists(userId);
+        checkEventExists(eventId);
+    }
+
 }

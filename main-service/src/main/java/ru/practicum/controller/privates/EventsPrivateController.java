@@ -5,7 +5,10 @@ import jakarta.validation.constraints.PositiveOrZero;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import ru.practicum.RatingClient;
+import ru.practicum.RatingResponseDto;
 import ru.practicum.dtos.event.*;
 import ru.practicum.dtos.request.ParticipationRequestDto;
 import ru.practicum.service.event.EventService;
@@ -19,6 +22,7 @@ import java.util.List;
 public class EventsPrivateController {
 
     private final EventService eventsService;
+    private final RatingClient ratingClient;
 
     @GetMapping
     public List<EventFullDto> getAllEventsByUserId(
@@ -58,5 +62,30 @@ public class EventsPrivateController {
         log.info("Received update request: userId={}, eventId={}, body={}",
                 userId, eventId, eventRequestStatusUpdateRequest);
         return eventsService.updateRequestsStatusOfUserEvent(userId, eventId, eventRequestStatusUpdateRequest);
+    }
+
+    @PostMapping("/{eventId}/like")
+    @ResponseStatus(HttpStatus.CREATED)
+    public ResponseEntity<Void> likeEvent(@PathVariable Long eventId, @PathVariable Long userId) {
+        log.info("Received like request: userId={}, eventId={}", userId, eventId);
+        eventsService.validateUserAndEvent(userId, eventId);
+        ratingClient.likeEvent(eventId, userId);
+        return ResponseEntity.status(HttpStatus.CREATED).build();
+    }
+
+    @PostMapping("/{eventId}/dislike")
+    @ResponseStatus(HttpStatus.CREATED)
+    public ResponseEntity<Void> dislikeEvent(@PathVariable Long eventId, @PathVariable Long userId) {
+        log.info("Received dislike request: userId={}, eventId={}", userId, eventId);
+        eventsService.validateUserAndEvent(userId, eventId);
+        ratingClient.dislikeEvent(eventId, userId);
+        return ResponseEntity.status(HttpStatus.CREATED).build();
+    }
+
+    @GetMapping("/{eventId}/rating")
+    public ResponseEntity<RatingResponseDto> totalRating(@PathVariable Long eventId) {
+        log.info("Received totalRating request: eventId={}", eventId);
+        RatingResponseDto response = ratingClient.totalRating(eventId);
+        return ResponseEntity.ok(response);
     }
 }

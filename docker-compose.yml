@@ -1,4 +1,3 @@
-version: '3.8'
 services:
   stats-server:
     build: stats-service/stat-server
@@ -41,6 +40,29 @@ services:
       - "5432:5432"
     environment:
       - POSTGRES_DB=ewm_db
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+
+  rating-service:
+    build: rating-events-service/rating-server
+    container_name: rating-service
+    ports:
+      - "9095:9095"
+    depends_on:
+      - rating-db
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://rating-db:5432/rating_db
+      - SPRING_DATASOURCE_USERNAME=postgres
+      - SPRING_DATASOURCE_PASSWORD=postgres
+
+  rating-db:
+    image: postgres:16.1
+    container_name: rating-db
+    ports:
+      - "5532:5432"
+    environment:
+      - POSTGRES_DB=rating_db
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
 

@@ -38,4 +38,6 @@ public interface EventService {
                                                     int size);
 
     EventFullDto getPublicEventById(Long id);
+
+    void validateUserAndEvent(Long eventId, Long userId);
 }
