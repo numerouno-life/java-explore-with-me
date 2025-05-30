@@ -4,8 +4,6 @@ import lombok.experimental.UtilityClass;
 import ru.practicum.dtos.request.ParticipationRequestDto;
 import ru.practicum.model.Request;
 
-import java.util.List;
-
 @UtilityClass
 public class RequestMapper {
 
@@ -17,9 +15,5 @@ public class RequestMapper {
                 .created(request.getCreated())
                 .status(request.getStatus())
                 .build();
-    }
-
-    public List<ParticipationRequestDto> toParticipationRequestDto(List<Request> requests) {
-        return requests.stream().map(RequestMapper::toParticipationRequestDto).toList();
     }
 }

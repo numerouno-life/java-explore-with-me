@@ -24,6 +24,7 @@ import ru.practicum.repository.CategoryRepository;
 import ru.practicum.repository.EventRepository;
 import ru.practicum.repository.RequestRepository;
 import ru.practicum.repository.UserRepository;
+import ru.practicum.service.user.UserService;
 
 import java.time.LocalDateTime;
 import java.util.*;
@@ -42,6 +43,7 @@ public class EventServiceImpl implements EventService {
     private final CategoryRepository categoryRepository;
     private final UserRepository userRepository;
     private final StatClient statClient;
+    private final UserService userService;
 
 
     @Override
@@ -65,7 +67,7 @@ public class EventServiceImpl implements EventService {
             throw new ValidationException("Date of event is before now plus 2 hours");
         }
 
-        User user = findUserById(userId);
+        User user = userService.findUserById(userId);
         Category category = findCategoryById(newEventDto.getCategory());
         return EventMapper.toEventFullDto(eventRepository.save(EventMapper.mapToEvent(newEventDto, category, user)));
     }
@@ -447,10 +449,6 @@ public class EventServiceImpl implements EventService {
             log.warn("Event with id {} not found", eventId);
             throw new EntityNotFoundException("Event with ID: " + eventId + " not found");
         }
-    }
-
-    private User findUserById(Long userId) {
-        return userRepository.findById(userId).orElseThrow(() -> new EntityNotFoundException("User not found"));
     }
 
     private Category findCategoryById(Long categoryId) {

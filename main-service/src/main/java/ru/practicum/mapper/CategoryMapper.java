@@ -8,13 +8,6 @@ import ru.practicum.model.Category;
 @UtilityClass
 public class CategoryMapper {
 
-    public Category toEntity(CategoryDto categoryDto) {
-        return Category.builder()
-                .id(categoryDto.getId())
-                .name(categoryDto.getName())
-                .build();
-    }
-
     public CategoryDto toCategoryDto(Category category) {
         return CategoryDto.builder()
                 .id(category.getId())

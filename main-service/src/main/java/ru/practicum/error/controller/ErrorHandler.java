@@ -89,7 +89,8 @@ public class ErrorHandler {
     }
 
     @ExceptionHandler({DuplicateParticipationRequestException.class, InvalidStateException.class,
-            SelfParticipationException.class, DataIntegrityViolationException.class, DuplicateCategoryException.class})
+            SelfParticipationException.class, DataIntegrityViolationException.class, DuplicateCategoryException.class,
+            SubscriptionException.class})
     @ResponseStatus(HttpStatus.CONFLICT)
     public ApiError handleConflict(final Exception e) {
         log.warn(e.getMessage(), e);
@@ -124,6 +125,11 @@ public class ErrorHandler {
                 errorMessage = String.format("Category with name '%s' already exists", ex.getMessage());
                 reason = "DuplicateCategoryException";
                 context = Map.of("categoryName", ex.getMessage());
+            }
+            case SubscriptionException ex -> {
+                errorMessage = "Subscription error: " + ex.getMessage();
+                reason = "SubscriptionException";
+                context = Map.of("user", ex.getMessage());
             }
             default -> {
                 errorMessage = "Unexpected conflict error";
