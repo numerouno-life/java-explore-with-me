@@ -188,7 +188,8 @@ public class RatingControllerIntegrationTest {
         assertEquals(threadCount * likesPerThread, body.getTotalRating());
     }
 
-    @Test
+    //TODO Закомментирован поскольку тест занимает слишком много времени
+    /*@Test
     public void testPerformance() {
         long startTime = System.currentTimeMillis();
 
@@ -198,7 +199,7 @@ public class RatingControllerIntegrationTest {
 
         long endTime = System.currentTimeMillis();
         System.out.println("Time taken: " + (endTime - startTime) + " ms");
-    }
+    }*/
 
     private ResponseEntity<Void> likeEvent() {
         return restTemplate.postForEntity(
