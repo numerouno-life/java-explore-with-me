@@ -24,4 +24,7 @@ public class User {
     String email;
 
     String name;
+
+    @Column(name = "allow_subscriptions", nullable = false)
+    boolean allowSubscriptions = true; // разрешена ли подписка
 }
