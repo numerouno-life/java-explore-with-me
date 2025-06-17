@@ -18,6 +18,8 @@ import static ru.practicum.dtos.utils.DateTimeFormatter.FORMAT;
 @Builder
 public class SubscriptionCheckDto {
 
+    boolean isSubscribed;
+
     @Nullable
     @JsonFormat(pattern = FORMAT)
     LocalDateTime subscriptionTime;

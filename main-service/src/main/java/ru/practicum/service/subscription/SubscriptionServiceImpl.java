@@ -177,13 +177,57 @@ public class SubscriptionServiceImpl implements SubscriptionService {
     @Override
     @Transactional(readOnly = true)
     public Long countSubscriptions(Long userId) {
-        return 0L;
+        log.info("Counting subscriptions for user {}", userId);
+        userService.findUserById(userId);
+        Long count = subscriptionRepository.countBySubscriberId(userId);
+        if (count == 0) {
+            log.info("No subscriptions found for user {}", userId);
+        } else {
+            log.info("Total subscriptions for user {}: {}", userId, count);
+        }
+        return count;
     }
 
     @Override
     @Transactional(readOnly = true)
     public SubscriptionCheckDto getSubscriptionStatus(Long userId, Long targetUserId) {
-        return null;
+        log.info("Checking subscription status for user {} to user {}", userId, targetUserId);
+        User subscriber = userService.findUserById(userId);
+        User targetUser = userService.findUserById(targetUserId);
+        Optional<Subscription> directSubscription = subscriptionRepository
+                .findBySubscriberAndTargetUser(subscriber, targetUser);
+        Optional<Subscription> reverseSubscription = subscriptionRepository
+                .findBySubscriberAndTargetUser(targetUser, subscriber);
+        if (directSubscription.isPresent() && reverseSubscription.isPresent()) {
+            log.info("User {} is subscribed to user {} with status MUTUAL", userId, targetUserId);
+            return SubscriptionCheckDto.builder()
+                    .isSubscribed(true)
+                    .subscriptionTime(directSubscription.get().getSubscriptionTime())
+                    .friendshipStatus(FriendshipStatus.MUTUAL)
+                    .build();
+        } else if (directSubscription.isPresent()) {
+            log.info("User {} is subscribed to user {} with status ONE_WAY", userId, targetUserId);
+            return SubscriptionCheckDto.builder()
+                    .isSubscribed(true)
+                    .subscriptionTime(directSubscription.get().getSubscriptionTime())
+                    .friendshipStatus(FriendshipStatus.ONE_WAY)
+                    .build();
+        } else if (reverseSubscription.isPresent()) {
+            log.info("User {} is not subscribed to user {}, but user {} is subscribed to user {}",
+                    userId, targetUserId, targetUserId, userId);
+            return SubscriptionCheckDto.builder()
+                    .isSubscribed(false)
+                    .subscriptionTime(reverseSubscription.get().getSubscriptionTime())
+                    .friendshipStatus(FriendshipStatus.ONE_WAY)
+                    .build();
+        } else {
+            log.info("No subscriptions found between user {} and user {}", userId, targetUserId);
+            return SubscriptionCheckDto.builder()
+                    .isSubscribed(false)
+                    .subscriptionTime(null)
+                    .friendshipStatus(FriendshipStatus.NONE)
+                    .build();
+        }
     }
 
     /**
